@@ -1,5 +1,3 @@
-To align the setup instructions correctly in your `README.md` file, you can structure it like this:
-
 # Weather Application
 
 This project is a React-based weather dashboard with user authentication and favorites management.
