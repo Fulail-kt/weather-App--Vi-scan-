@@ -2,15 +2,9 @@ import axios from 'axios'
 
 
 const Api = axios.create({
-    baseURL:'http://localhost:3000/api'
+    baseURL:import.meta.env.VITE_APP_BACKEND
 })
 
-// Api.interceptors.request.use((req)=>{
-//     if(localStorage.getItem('vi_token')){
-//         req.headers.Authorization = `Bearer ${JSON.parse(localStorage.getItem('vi_token')).token}`
-//     }
-//     return req
-// })
 
 Api.interceptors.request.use(
     config => {
