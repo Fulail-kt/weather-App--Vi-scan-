@@ -1,0 +1,25 @@
+// prisma/schema.prisma
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        Int        @id @default(autoincrement())
+  name      String
+  email     String     @unique
+  password  String
+  favorites Favorite[] @relation(name: "UserFavorites")
+}
+
+model Favorite {
+  id     Int    @id @default(autoincrement())
+  city   String
+  userId Int
+  user   User   @relation(fields: [userId], references: [id], name: "UserFavorites")
+}
