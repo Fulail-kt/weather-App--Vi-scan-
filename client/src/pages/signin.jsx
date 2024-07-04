@@ -6,6 +6,7 @@ const Signin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,24 +24,26 @@ const Signin = () => {
         return;
       }
 
-      const response = await Api.post("/login", { email, password });
+      setLoading(true);
 
-      console.log(response, "res");
+      const response = await Api.post("/login", { email, password });
 
       if (response.data.success) {
         localStorage.setItem("vi_token", response?.data?.accessToken);
         navigate("/");
       } else {
         setErrors({
-          submit: (response.data.message ??= "Invalid credentials"),
+          submit: response.data.message ?? "Invalid credentials",
         });
       }
     } catch (error) {
-      console.log(error, "error");
       setErrors({
-        submit: (error.response.data.message ??=
-          "Error logging in. Please try again later."),
+        submit:
+          error.response?.data?.message ??
+          "Error logging in. Please try again later.",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -95,11 +98,12 @@ const Signin = () => {
               <button
                 type="submit"
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                disabled={loading}
               >
-                Sign in
+                {loading ? "Signing in..." : "Sign in"}
               </button>
-              <Link to="/sign-up " className="text-xs">
-                create account
+              <Link to="/sign-up" className="text-xs">
+                Create account
               </Link>
             </div>
           </form>

@@ -7,6 +7,7 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const validateForm = () => {
@@ -24,6 +25,7 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
+      setLoading(true);
       try {
         const response = await Api.post("/register", { email, password, name });
         if (response?.data?.success) {
@@ -31,9 +33,12 @@ const Signup = () => {
         }
       } catch (error) {
         setErrors({
-          submit: (error.response.data.message ??=
-            "Registration failed. Please try again."),
+          submit:
+            error.response?.data?.message ??
+            "Registration failed. Please try again.",
         });
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -122,11 +127,12 @@ const Signup = () => {
               <button
                 type="submit"
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                disabled={loading}
               >
-                Sign up
+                {loading ? "Signing up..." : "Sign up"}
               </button>
               <Link to="/sign-in" className="text-xs">
-                Already an account
+                Already have an account?
               </Link>
             </div>
           </form>
