@@ -44,9 +44,9 @@ function WeatherDisplay({ data }) {
   return (
     data && (
       <>
-        <div className="rounded-md bg_traveler flex flex-col justify-center items-center p-6">
-          <div className=" text-white font-bold mb-4 bg-opacity-50 rounded-md bg-black flex justify-around opacity-50 w-[90%] text-xl font-sans shadow-md py-2">
-            <h2 className="text-center "> Traveler Weather</h2>
+        <div className="rounded-md bg_weather flex flex-col justify-center items-center p-6">
+          <div className=" text-white font-bold mb-4 bg-opacity-50 rounded-md bg-black flex justify-around opacity-80 w-[90%] text-xl font-sans shadow-md py-2">
+            <h2 className="text-center ">Weather</h2>
             <span>
               {data?.name} ({data?.sys?.country})
             </span>
@@ -146,7 +146,7 @@ function WeatherDisplay({ data }) {
 
             {show7Days && data && data?.forecast && (
               <div className="fixed top-0 left-0 h-full w-full flex items-center justify-center  bg-opacity-70">
-                <div className="rounded-md bg-gradient-to-t from-gray-800 to-gray-600 flex flex-col justify-center items-center p-6">
+                <div className="rounded-md no-scroll bg-gradient-to-t from-gray-800 to-gray-600 flex flex-col justify-center items-center p-6">
                   <h2 className="text-center text-xl py-2 w-[90%] text-white font-bold mb-4 bg-opacity-50 rounded-md bg-black">
                     7-Day Forecast
                   </h2>

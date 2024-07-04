@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
+import { useState, useEffect } from "react";
 import {
   getWeatherData,
   getAirQualityData,
@@ -8,9 +8,7 @@ import {
   getFavorites,
   addFavorite,
 } from "../Apis";
-
 import WeatherDisplay from "../components/WeatherDisplay";
-
 import { useNavigate } from "react-router-dom";
 import AccordionItem from "../components/accordian/favAccordion";
 
@@ -19,12 +17,12 @@ function Home() {
   const [searchCity, setSearchCity] = useState("");
   const [favorites, setFavorites] = useState([]);
   const [userId, setUserId] = useState("");
+  const [isAddingFavorite, setIsAddingFavorite] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("vi_token");
-    if (token === null || token === undefined) {
-      // navigate("/sign-in", { replace: true });
+    if (!token) {
       window.location.href = "/sign-in";
     }
     const decoded = jwtDecode(token);
@@ -49,7 +47,6 @@ function Home() {
         );
         const forecast = await getForecastData(data.coord.lat, data.coord.lon);
         const pastWeather = await getHistoricalWeatherData(searchCity.trim());
-        console.log("pastWeather", pastWeather);
         setWeatherData({
           ...data,
           airQuality: airQualityResponse,
@@ -61,9 +58,32 @@ function Home() {
   };
 
   const addToFav = async () => {
-    const response = await addFavorite(userId, weatherData.name);
-    if (response) {
-      fetchFavoriteCities(userId);
+    if (!weatherData || isAddingFavorite) return;
+
+    const isCityInFavorites = favorites.some(
+      (fav) => fav.city.toLowerCase() === weatherData.name.toLowerCase()
+    );
+    if (isCityInFavorites) {
+      alert("This city is already in your favorites!");
+      return;
+    }
+
+    setIsAddingFavorite(true);
+    try {
+      const response = await addFavorite(userId, weatherData.name);
+      if (response) {
+        const newFavorite = {
+          id: response.id,
+          city: weatherData.name,
+          weather: {
+            main: weatherData.main,
+            weather: weatherData.weather,
+          },
+        };
+        setFavorites((prevFavorites) => [...prevFavorites, newFavorite]);
+      }
+    } finally {
+      setIsAddingFavorite(false);
     }
   };
 
@@ -71,16 +91,14 @@ function Home() {
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const { latitude, longitude } = position.coords;
-
         const data = await getWeatherData(latitude, longitude);
         if (data) {
           const airQualityResponse = await getAirQualityData(
             latitude,
             longitude
           );
-          console.log(data.name, "city---------------------------");
           const forecast = await getForecastData(latitude, longitude);
-          const pastWeather = await getHistoricalWeatherData(data?.name);
+          const pastWeather = await getHistoricalWeatherData(data.name);
           setWeatherData({
             ...data,
             airQuality: airQualityResponse,
@@ -99,10 +117,10 @@ function Home() {
   };
 
   return (
-    <div className="">
-      <div className=" w-full flex justify-center  py-4">
+    <div>
+      <div className="w-full flex justify-center py-4">
         <button
-          className="bg-blue-600 rounded-md px-4 text-white py-1"
+          className="bg-red-600 rounded-md px-4 text-white py-1"
           onClick={() => {
             localStorage.removeItem("vi_token");
             navigate("/sign-in");
@@ -123,16 +141,19 @@ function Home() {
           />
           <button
             type="submit"
-            className="bg-blue-600 text-white px-4  rounded-md"
+            className="bg-blue-600 text-white px-4 rounded-md"
           >
             Search
           </button>
         </form>
         <button
-          onClick={() => addToFav()}
-          className="bg-green-500 text-white px-4 py-2 rounded-md "
+          onClick={addToFav}
+          className={`bg-green-500 text-white px-4 py-2 rounded-md ${
+            isAddingFavorite ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+          disabled={isAddingFavorite}
         >
-          &#x1F496;
+          {isAddingFavorite ? "Adding..." : "❤️"}
         </button>
       </div>
 

@@ -49,7 +49,7 @@ const AccordionItem = ({ city, weather }) => {
             <ul className="space-y-2">
               {weather?.forecast?.map((day, index) => (
                 <li key={index}>
-                  {day.dt_txt}: {day.main.temp}°C
+                  {day.dt_txt.toString().split(" ")[0]}: {day.main.temp}°C
                 </li>
               ))}
             </ul>

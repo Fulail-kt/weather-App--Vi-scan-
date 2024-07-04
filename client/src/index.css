@@ -8,23 +8,12 @@
     display: none;
   }
 
- 
   -ms-overflow-style: none; 
   scrollbar-width: none;  
 }
-.bg_traveler {
+.bg_weather {
   @apply bg-cover bg-center;
-  background-image: url('../public/images/traveler.png'); }
-.bg_event {
-  @apply bg-cover bg-center;
-  background-image: url('../public/images/event-planer.png'); }
-.bg_general {
-  @apply bg-cover bg-center;
-  background-image: url('../public/images/general.jpg'); }
-.bg_farmer {
-  @apply bg-cover bg-center;
-  background-image: url('../public/images/farmer.jpg'); }
-
+  background-image: url('../public/images/bg_cloud.jpg'); }
 
 
 :root {
